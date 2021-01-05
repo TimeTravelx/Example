@@ -1,4 +1,5 @@
 #include "TCPServer.h"
+#include "log/ILog.h"
 #include <memory.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -37,34 +38,40 @@ int TCPServer::listen(const std::string& __host, const std::string& __port)
 
     /* 初始化socket */
     mSockfd = ::socket(AF_INET/* ipv4 */, SOCK_STREAM/* tcp*/, 0);
-    if (mSockfd < 0) return -1;
+    if (mSockfd < 0) { LogErr("[server] socket create failed. \n"); return -1; }
 
     // 初始化服务器地址  
     struct sockaddr_in addr = {0};     
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(stoi(__port));
-    addr.sin_addr.s_addr = inet_addr(ip);
-
-    /* connect to server */
-    printf("111111 \n");
+    addr.sin_port = htons(stoi(__port))/* 端口号*/;
+    addr.sin_addr.s_addr = inet_addr(ip)/* ip */;
+    
+    /* build server ip*/
     int confd = ::bind(mSockfd, (sockaddr*)&addr, sizeof(addr));
-    printf("2222 \n");
     if (confd < 0) {
+        LogErr("[server] socket bind failed. \n");
         ::close(mSockfd);
+        mSockfd = -1;
         return -1; 
     }
 
     int listenfd = ::listen(mSockfd, MAXCLIENTSIZE);
-    printf("3333 \n");
+
     if (listenfd < 0) {
+        LogErr("[server] socket listen failed. \n");
         ::close(mSockfd);
+        mSockfd = -1;
         return -1; 
     }
-    printf("4444 \n");
+
     /* thread to run server loop*/
     /// thread to run the loop
+    if (mListen_thread.joinable()) {
+        LogWarn("[server] listen_loop is still run, now wait.\n");
+        mListen_thread.join();
+    }
+
     mListen_thread = std::thread(std::bind(&TCPServer::listen_loop, this));
-    printf("success \n");
 
     return 0;
 }
@@ -82,38 +89,30 @@ void TCPServer::register_recv(RECV __recv_function)
 
 void TCPServer::close()
 {
-    ::shutdown(mSockfd, SHUT_WR);
+    ::close(mSockfd);
 }
 
 void TCPServer::listen_loop()
 {
-    printf("5555 \n");
     while (mSockfd != -1) {
-        printf("777777777444777 \n");
         struct sockaddr_in client_addr;
         socklen_t client_addr_len = sizeof(struct sockaddr_in);
         int clientfd = ::accept(mSockfd,(struct sockaddr *)(&client_addr), &client_addr_len);
-        printf("777777775557777 \n");
         if (clientfd < 0) continue;
-        printf("666666666 \n");
         int len = ::recv(clientfd, (void*)mBuf, MAXMSGLEN, 0);
         if (len < 0)
         {
-            printf("999 \n");
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             continue;
         }
         else if (len == 0)
         {
-            printf("1010 \n");
             ::close(mSockfd);
             mSockfd = -1;
         }
         else
         {
-            printf("1212 \n");
-            printf("mBuf:%.*s \n", len, mBuf);
-            mCallbackRecv(mBuf, len);
+            if(mCallbackRecv) mCallbackRecv(mBuf, len);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

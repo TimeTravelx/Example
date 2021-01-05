@@ -14,7 +14,7 @@ HLog2File::HLog2File(const int __level, const unsigned long __size):
 
 HLog2File::~HLog2File()
 {
-
+    if (mFile) { fclose(mFile); mFile = NULL; }
 }
 
 /*** 
@@ -65,7 +65,7 @@ void HLog2File::debug(const std::string __format, ...)
     va_start(arg, __format);
     time_t time_log = time(NULL);
     struct tm* tm_log = localtime(&time_log);
-    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [DEBUG]",
+    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [DEBUG] ",
         tm_log->tm_year + 1900,
         tm_log->tm_mon + 1,
         tm_log->tm_mday,
@@ -86,7 +86,7 @@ void HLog2File::info(const std::string __format, ...)
     va_start(arg, __format);
     time_t time_log = time(NULL);
     struct tm* tm_log = localtime(&time_log);
-    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [INFO] ",
+    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [INFO]  ",
         tm_log->tm_year + 1900,
         tm_log->tm_mon + 1,
         tm_log->tm_mday,
@@ -107,7 +107,7 @@ void HLog2File::warn(const std::string __format, ...)
     va_start(arg, __format);
     time_t time_log = time(NULL);
     struct tm* tm_log = localtime(&time_log);
-    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [WARN] ",
+    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [WARN]  ",
         tm_log->tm_year + 1900,
         tm_log->tm_mon + 1,
         tm_log->tm_mday,
@@ -128,7 +128,7 @@ void HLog2File::err(const std::string __format, ...)
     va_start(arg, __format);
     time_t time_log = time(NULL);
     struct tm* tm_log = localtime(&time_log);
-    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [ERR]  ",
+    fprintf(mFile, "[%04d-%02d-%02d %02d:%02d:%02d] [%d] [ERR]   ",
         tm_log->tm_year + 1900,
         tm_log->tm_mon + 1,
         tm_log->tm_mday,

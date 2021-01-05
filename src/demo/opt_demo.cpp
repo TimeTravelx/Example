@@ -63,7 +63,7 @@ static struct option g_long_options[] = {
 };
 
 
-void opt_demo(int __argc, char* __argv[])
+int main(int __argc, char* __argv[])
 {
     printf("[%s] \n", __FUNCTION__);
     int ret = 0;
@@ -84,6 +84,8 @@ void opt_demo(int __argc, char* __argv[])
             break;
         }
     }
+
+    return 0;
 }
 
 

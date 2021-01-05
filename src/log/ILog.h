@@ -14,10 +14,10 @@
 #define WARN_LEVEL       1
 #define ERR_LEVEL        0
 
-#define LogDebug(format, ...)   do {if (ilog) { ilog->debug(format, ##__VA_ARGS__)}} while(0);
-#define LogInfo(format, ...)    do {if (ilog) { ilog->info (format, ##__VA_ARGS__)}} while(0);
-#define LogWarn(format, ...)    do {if (ilog) { ilog->warn (format, ##__VA_ARGS__)}} while(0);
-#define LogErr(format, ...)     do {if (ilog) { ilog->err  (format, ##__VA_ARGS__)}} while(0);
+#define LogDebug(format, ...)   do {if (ilog) { ilog->debug(format, ##__VA_ARGS__);}} while(0) 
+#define LogInfo(format, ...)    do {if (ilog) { ilog->info (format, ##__VA_ARGS__);}} while(0)
+#define LogWarn(format, ...)    do {if (ilog) { ilog->warn (format, ##__VA_ARGS__);}} while(0)
+#define LogErr(format, ...)     do {if (ilog) { ilog->err  (format, ##__VA_ARGS__);}} while(0)
 
 
 class ILog
