@@ -1,5 +1,5 @@
 #include "TCPServer.h"
-#include "log/ILog.h"
+#include "log/LogManager.h"
 #include <memory.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -38,7 +38,7 @@ int TCPServer::listen(const std::string& __host, const std::string& __port)
 
     /* 初始化socket */
     mSockfd = ::socket(AF_INET/* ipv4 */, SOCK_STREAM/* tcp*/, 0);
-    if (mSockfd < 0) { LogErr("[server] socket create failed. \n"); return -1; }
+    if (mSockfd < 0) { LogManager::LOG()->err("[server] socket create failed. \n"); return -1; }
 
     // 初始化服务器地址  
     struct sockaddr_in addr = {0};     
@@ -49,7 +49,7 @@ int TCPServer::listen(const std::string& __host, const std::string& __port)
     /* build server ip*/
     int confd = ::bind(mSockfd, (sockaddr*)&addr, sizeof(addr));
     if (confd < 0) {
-        LogErr("[server] socket bind failed. \n");
+        LogManager::LOG()->err("[server] socket bind failed. \n");
         ::close(mSockfd);
         mSockfd = -1;
         return -1; 
@@ -58,7 +58,7 @@ int TCPServer::listen(const std::string& __host, const std::string& __port)
     int listenfd = ::listen(mSockfd, MAXCLIENTSIZE);
 
     if (listenfd < 0) {
-        LogErr("[server] socket listen failed. \n");
+        LogManager::LOG()->err("[server] socket listen failed. \n");
         ::close(mSockfd);
         mSockfd = -1;
         return -1; 
@@ -67,7 +67,7 @@ int TCPServer::listen(const std::string& __host, const std::string& __port)
     /* thread to run server loop*/
     /// thread to run the loop
     if (mListen_thread.joinable()) {
-        LogWarn("[server] listen_loop is still run, now wait.\n");
+        LogManager::LOG()->warn("[server] listen_loop is still run, now wait.\n");
         mListen_thread.join();
     }
 

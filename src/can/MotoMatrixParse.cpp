@@ -25,7 +25,7 @@ DWORD MotoMatrixParse::decode(const BYTE* __buf, const BYTE __start_byte, const 
         if (__start_byte+i>8) continue;
         tmp += (__buf[__start_byte+i] << (8*(3-i)));
     }
-    return BitMask(tmp, (DWORD)__start_bit, (DWORD)__len);
+    return BitMask(tmp, __start_bit, __len);
 }
 
 DWORD MotoMatrixParse::decode(const BYTE* __buf, const BYTE __start_bit, const BYTE __len)

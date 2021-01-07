@@ -9,7 +9,7 @@
 #define H_BITMASK_H
 
 template<typename T>
-T BitMask(const T& __src, const T& __start, const T& __len)
+T BitMask(const T __src, const unsigned char __start, const unsigned char  __len)
 {
     if (__len == 0) return 0;
     T tmp = 0;

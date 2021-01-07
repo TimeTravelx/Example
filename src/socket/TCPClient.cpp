@@ -1,5 +1,5 @@
 #include "TCPClient.h"
-#include "log/ILog.h"
+#include "log/LogManager.h"
 #include <memory.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -26,18 +26,18 @@ TCPClient::~TCPClient()
 
 int TCPClient::connect(const std::string& __host, const std::string& __port)
 {
-    if (__host.empty() || __port.empty()) { LogErr("[client] connect err, __host or __port is empty. \n"); return -1;}
+    if (__host.empty() || __port.empty()) { LogManager::LOG()->err("[client] connect err, __host or __port is empty. \n"); return -1;}
     /* 获取ip地址 */
     char **pptr;
     char str[32] = {0};
     struct hostent *hptr = ::gethostbyname(__host.c_str());
-    if(hptr == nullptr) { LogErr("[client] gethostbyname failed. \n"); return -1;}
+    if(hptr == nullptr) { LogManager::LOG()->err("[client] gethostbyname failed. \n"); return -1;}
 
     pptr = hptr->h_addr_list;
     const char* ip = inet_ntop(hptr->h_addrtype, hptr->h_addr, str, sizeof(str));
     /* 初始化socket */
     mSockfd = ::socket(AF_INET/* ipv4 */, SOCK_STREAM/* tcp*/, 0);
-    if (mSockfd < 0) { LogErr("[client] socket create failed. \n"); return -1; }
+    if (mSockfd < 0) { LogManager::LOG()->err("[client] socket create failed. \n"); return -1; }
 
     /// 配置 socket 地址
     struct sockaddr_in addr = {0};
@@ -48,7 +48,7 @@ int TCPClient::connect(const std::string& __host, const std::string& __port)
     /* 设置端口复用 */
     int reuse = 1;
     if (setsockopt(mSockfd, SOL_SOCKET, SO_REUSEADDR, (const void*)&reuse, sizeof(reuse)) == 0) {
-        LogErr("[client] setsockopt reuse failed. \n"); 
+        LogManager::LOG()->err("[client] setsockopt reuse failed. \n"); 
         ::close(mSockfd);
         mSockfd = -1;
         return -1;
@@ -58,7 +58,7 @@ int TCPClient::connect(const std::string& __host, const std::string& __port)
     /* 禁止发送合并的Nagle算法，避免粘包*/
     int enable = 1;
     if (setsockopt(mSockfd, IPPROTO_TCP, TCP_NODELAY, (void*)&enable, sizeof(enable)) != 0) {
-        LogErr("[client] setsockopt enable failed. \n");
+        LogManager::LOG()->err("[client] setsockopt enable failed. \n");
         ::close(mSockfd);
         mSockfd = -1;
         return -1;
@@ -67,7 +67,7 @@ int TCPClient::connect(const std::string& __host, const std::string& __port)
     /* set send & receive buf*/
     int sndbuf = MAXMSGLEN;
     if (setsockopt(mSockfd, SOL_SOCKET, SO_SNDBUF, (char*)&sndbuf, sizeof(sndbuf)) != 0) {
-        LogErr("[client] setsockopt sndbuf failed. \n");
+        LogManager::LOG()->err("[client] setsockopt sndbuf failed. \n");
         ::close(mSockfd);
         mSockfd = -1;
         return -1;
@@ -75,7 +75,7 @@ int TCPClient::connect(const std::string& __host, const std::string& __port)
 
     int rcvbuf = MAXMSGLEN;
     if (setsockopt(mSockfd, SOL_SOCKET, SO_RCVBUF, (char*)&rcvbuf, sizeof(rcvbuf)) != 0) {
-        LogErr("[client] setsockopt rcvbuf failed. \n"); 
+        LogManager::LOG()->err("[client] setsockopt rcvbuf failed. \n"); 
         ::close(mSockfd);
         mSockfd = -1;
         return -1;
@@ -86,7 +86,7 @@ int TCPClient::connect(const std::string& __host, const std::string& __port)
     /* connect to server */
     int confd = ::connect(mSockfd, (sockaddr*)&addr, sizeof(addr));
     if (confd < 0) {
-        LogErr("[client] socket connect failed. \n");
+        LogManager::LOG()->err("[client] socket connect failed. \n");
         ::close(mSockfd);
         mSockfd = -1;
         return -1;
@@ -95,7 +95,7 @@ int TCPClient::connect(const std::string& __host, const std::string& __port)
     /* thread to run client loop*/
     /// thread to run the loop
     if (mConnect_thread.joinable()) {
-        LogWarn("[client] connect_loop is still run, now wait.\n");
+        LogManager::LOG()->warn("[client] connect_loop is still run, now wait.\n");
         mConnect_thread.join();
     }
 
@@ -106,7 +106,7 @@ int TCPClient::connect(const std::string& __host, const std::string& __port)
 int TCPClient::send(const void *__buf, size_t __buf_len)
 {
     if (::send(mSockfd, __buf, __buf_len, 0) < 0) {
-        LogErr("[client] send data failed. \n");
+        LogManager::LOG()->err("[client] send data failed. \n");
         return -1;
     }
     return 0;

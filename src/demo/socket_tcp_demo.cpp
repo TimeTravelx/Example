@@ -5,12 +5,13 @@
 
 #include "socket/TCPClient.h"
 #include "socket/TCPServer.h"
-#include "log/LogFactory.h"
+#include "log/LogManager.h"
 
 int main()
 {
-    LogFactory::instance()->config(LogType::Log2File, DEBUG_LEVEL, "socket.log");
-
+    // LogFactory::instance()->config(LogType::Log2File, DEBUG_LEVEL, "socket.log");
+    // Log2FileFactory::instance()->create
+    
     pid_t pid = fork();
     if (pid < 0) {
         printf("fork failed \n");
