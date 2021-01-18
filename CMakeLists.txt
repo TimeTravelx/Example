@@ -25,12 +25,19 @@ aux_source_directory(${CMAKE_SOURCE_DIR}/src/socket SOCKET_LIST)
 #     ${DEMO_LIST} ${LOG_LIST} ${SOCKET_LIST})
 
 add_executable(opt_demo src/demo/opt_demo.cpp)
+
 add_executable(socket-tcp src/demo/socket_tcp_demo.cpp ${SOCKET_LIST} ${LOG_LIST})
 target_link_libraries(socket-tcp pthread)
+
 add_executable(std-thread src/demo/std_thread_demo.cpp)
 target_link_libraries(std-thread pthread)
 
+add_executable(openssl-demo src/demo/openssl_demo.cpp)
+target_link_libraries(openssl-demo ssl crypto)
+
 add_executable(tcp-socket-server src/demo/tcp-server.cpp)
 add_executable(tcp-socket-client src/demo/tcp-client.cpp)
-# target_link_libraries(Example pthread)
+
+add_executable(gdb-threaed src/demo/gdb_thread_debug.cpp)
+target_link_libraries(gdb-threaed  pthread)
 
