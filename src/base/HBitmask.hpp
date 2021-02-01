@@ -1,12 +1,11 @@
 /*** 
  * @Author: TimeTravel
- * @FilePath: /Example/src/base/h-bitmask.h
+ * @FilePath: /Example/src/base/h-bitmask.hpp
  * @Date: 2020-12-28 16:36:39
  * @Description: 获取某些位的值
  */
 
-#ifndef H_BITMASK_H
-#define H_BITMASK_H
+#pragma once
 
 template<typename T>
 T BitMask(const T __src, const unsigned char __start, const unsigned char  __len)
@@ -19,5 +18,3 @@ T BitMask(const T __src, const unsigned char __start, const unsigned char  __len
     return ((tmp&__src)>>__start);
 }
 
-
-#endif //H_BITMASK_H

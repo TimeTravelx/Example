@@ -1,13 +1,10 @@
 /***
  * @Author: TimeTravel
- * @FilePath: /Example/src/base/HSignal.h
+ * @FilePath: /Example/src/base/HSignal.hpp
  * @Date: 2021-01-07 15:26:46
  * @Description: hsignal, bind callback
  */
-
-
-#ifndef HSIGNAL_H
-#define HSIGNAL_H
+#pragma once
 
 #include <vector>
 
@@ -32,5 +29,3 @@ public:
 private:
     std::vector<T> mList;
 };
-
-#endif // HSIGNAL_H

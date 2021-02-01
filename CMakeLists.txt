@@ -11,10 +11,12 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 # file(GLOB SOCKET_LIST   "${CMAKE_SOURCE_DIR}/src/socket/*.*")
 
 # aux_source_directory(${CMAKE_SOURCE_DIR}/src/demo   DEMO_LIST)
-aux_source_directory(${CMAKE_SOURCE_DIR}/src/can    CAN_LIST)
-aux_source_directory(${CMAKE_SOURCE_DIR}/src/base   BASE_LIST)
-aux_source_directory(${CMAKE_SOURCE_DIR}/src/log    LOG_LIST)
-aux_source_directory(${CMAKE_SOURCE_DIR}/src/socket SOCKET_LIST)
+aux_source_directory(${CMAKE_SOURCE_DIR}/src/can       CAN_LIST)
+aux_source_directory(${CMAKE_SOURCE_DIR}/src/daemon    DAEMON_LIST)
+aux_source_directory(${CMAKE_SOURCE_DIR}/src/base      BASE_LIST)
+aux_source_directory(${CMAKE_SOURCE_DIR}/src/log       LOG_LIST)
+aux_source_directory(${CMAKE_SOURCE_DIR}/src/socket    SOCKET_LIST)
+aux_source_directory(${CMAKE_SOURCE_DIR}/src/system    SYS_LIST)
 #demo config
 
 #add_definitions(-D OPT_DEMO)
@@ -41,3 +43,6 @@ add_executable(tcp-socket-client src/demo/tcp-client.cpp)
 add_executable(gdb-threaed src/demo/gdb_thread_debug.cpp)
 target_link_libraries(gdb-threaed  pthread)
 
+add_executable(daemon-demo src/demo/daemon_demo.cpp ${DAEMON_LIST} ${SYS_LIST})
+
+add_executable(dp-demo src/demo/dpptr_demo.cpp src/dp/A.cpp)
